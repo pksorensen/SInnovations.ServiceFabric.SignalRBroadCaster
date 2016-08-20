@@ -11,7 +11,7 @@ define(["require", "exports", "signalr", "jQuery"], function (require, exports, 
             console.log(userName + ' ' + message);
         });
         console.log(connection);
-        var promise = connection.start({ transport: $.signalR.transports.webSockets });
+        var promise = connection.start();
         promise.done(function () {
             console.log('Now connected, connection ID=' + connection.id);
             setInterval(function () {

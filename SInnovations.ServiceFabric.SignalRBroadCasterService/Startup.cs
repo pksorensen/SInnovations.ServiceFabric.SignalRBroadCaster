@@ -46,11 +46,6 @@ namespace SInnovations.ServiceFabric.SignalRBroadCasterService
 
             app.UseWebSockets();
 
-            //app.Run(async (context) =>
-            //{
-            //    await context.Response.WriteAsync("Hello World! " + FabricRuntime.GetNodeContext().NodeInstanceId);
-            //});
-
             app.Map("/signalr", signalrApp =>
             {
                 signalrApp.UseKatana(config =>
