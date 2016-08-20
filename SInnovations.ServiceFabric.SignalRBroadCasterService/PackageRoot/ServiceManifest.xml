@@ -15,6 +15,7 @@
     <EntryPoint>
       <ExeHost>
         <Program>SInnovations.ServiceFabric.SignalRBroadCasterService.exe</Program>
+        <Arguments>--fabric true</Arguments>
         <WorkingFolder>CodePackage</WorkingFolder>
       </ExeHost>
     </EntryPoint>

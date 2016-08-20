@@ -1,0 +1,64 @@
+﻿<html>
+<head>
+    <script src="libs/requirejs/require.js"></script>
+       
+        <script>
+        require.config({
+            paths: {
+                "css": "libs/requirejs/css",
+                "text": "libs/requirejs/text",
+                "modernizr": "libs/modernizr/modernizr",
+                "nprogress": "libs/nprogress/nprogress",
+                "headroom": "libs/headroom/headroom",
+                "bluebird": "libs/bluebird/bluebird.min",
+                "signalr": "libs/signalr/jquery.signalR.min.umd",
+                "jQuery":"//code.jquery.com/jquery-3.1.0.min" //"js/jQuery"
+            },
+            shim: {
+                "nprogress": {
+                    deps: ["css!libs/nprogress/nprogress.css"]
+                },
+                "signalr": {
+                    deps: ["jQuery"]
+                },
+                "jQuery": {
+                    exports:"$"
+                }
+                
+            }
+           
+        });
+
+        requirejs.onError = function (err) {
+            console.log(err.requireType);
+            if (err.requireType === 'timeout') {
+                console.log('modules: ' + err.requireModules);
+            }
+
+            throw err;
+        };
+
+
+    </script>
+</head>
+<body>
+    hello world
+
+
+
+    <script type="text/javascript">
+        require(["nprogress"], function (NProgress) {
+            NProgress.configure({ minimum: 0.4 });
+            NProgress.start();
+
+            require(["js/app"],
+           function () {
+               
+               NProgress.done();
+              
+           });
+
+        });
+    </script>
+</body>
+</html>

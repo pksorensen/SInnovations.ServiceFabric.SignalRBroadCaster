@@ -1,0 +1,22 @@
+{
+	"version": "1.0.0",
+	"name": "asp.net",
+  "private": true,
+  "dependencies": {
+    "bluebird": "3.4.1",
+    "component-ajax": "0.0.2",
+    "requirejs": "2.2.0",
+    "require-css": "0.1.8",
+    "requirejs-text": "2.0.12",
+    "modernizr": "3.3.1",
+    "nprogress": "0.2.0",
+    "@types/modernizr": "^3.2.26",
+    "@types/nprogress": "0.0.27"
+  },
+  "devDependencies": {
+    "grunt": "1.0.1",
+    "signalr": "2.2.1",
+    "grunt-npmcopy": "0.1.0",
+    "grunt-umd": "2.3.6"
+  }
+}

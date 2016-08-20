@@ -6,6 +6,8 @@ using System.Fabric;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System;
+using System.Linq;
 
 namespace SInnovations.ServiceFabric.SignalRBroadCasterService
 {
@@ -14,9 +16,27 @@ namespace SInnovations.ServiceFabric.SignalRBroadCasterService
         // Entry point for the application.
         public static void Main(string[] args)
         {
-            ServiceRuntime.RegisterServiceAsync("SignalRBroadCasterServiceType", context => new WebHostingService(context, "ServiceEndpoint")).GetAwaiter().GetResult();
+            if (args.Any(k => k == "--fabric"))
+            {
+                ServiceRuntime.RegisterServiceAsync("SignalRBroadCasterServiceType", context => new WebHostingService(context, "ServiceEndpoint")).GetAwaiter().GetResult();
 
-            Thread.Sleep(Timeout.Infinite);
+               Thread.Sleep(Timeout.Infinite);
+            }
+            else
+            {
+
+
+                var host = new WebHostBuilder()
+                   .UseKestrel()
+                   .UseContentRoot(Directory.GetCurrentDirectory())
+                   .UseIISIntegration()
+                   .UseStartup<Startup>()
+                   .Build();
+
+                host.Run();
+            }
+
+        
         }
 
         /// <summary>
@@ -60,18 +80,30 @@ namespace SInnovations.ServiceFabric.SignalRBroadCasterService
             Task<string> ICommunicationListener.OpenAsync(CancellationToken cancellationToken)
             {
                 var endpoint = FabricRuntime.GetActivationContext().GetEndpoint(_endpointName);
+                var tries = 10;
+                while (tries-- > 0)
+                {
+                    try
+                    {
+                        string serverUrl = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port - (tries - 10)}";
 
-                string serverUrl = $"{endpoint.Protocol}://{FabricRuntime.GetNodeContext().IPAddressOrFQDN}:{endpoint.Port}";
+                        _webHost = new WebHostBuilder().UseKestrel()
+                                                       .UseContentRoot(Directory.GetCurrentDirectory())
+                                                       .UseStartup<Startup>()
+                                                       .UseUrls(serverUrl)
+                                                       .Build();
 
-                _webHost = new WebHostBuilder().UseKestrel()
-                                               .UseContentRoot(Directory.GetCurrentDirectory())
-                                               .UseStartup<Startup>()
-                                               .UseUrls(serverUrl)
-                                               .Build();
+                        _webHost.Start();
 
-                _webHost.Start();
+                        return Task.FromResult(serverUrl);
+                    }
+                    catch (Exception ex)
+                    {
 
-                return Task.FromResult(serverUrl);
+                    }
+                }
+
+                throw new NotImplementedException();
             }
 
             #endregion ICommunicationListener
